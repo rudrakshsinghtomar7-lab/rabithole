@@ -1,0 +1,402 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Paper Glass — the app's material layer. Loaded after index.css.
+
+   Liquid Glass shapes (a floating capsule tab bar, inset sheets, round glass
+   controls, a softly lit rim) in matte, paper-tinted fills: heavy frost, no white
+   gloss, same palette and accents. Everything theme-dependent is a token, so the
+   OS dark setting and the in-app theme toggle stay in step.
+   Source drafts: design/drafts/liquid-glass-draft-a.css + …-e-paper-glass.css
+   ───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --lg-blur: 30px;
+  --lg-rim-hi: rgba(255, 255, 255, 0.75);
+  --lg-rim-lo: rgba(255, 255, 255, 0.1);
+  --lg-inner: inset 0 1px 0.5px rgba(255, 255, 255, 0.45);
+  --lg-drop: 0 8px 24px rgba(30, 25, 15, 0.12), 0 2px 5px rgba(30, 25, 15, 0.06);
+  --pg-nav: color-mix(in srgb, var(--bg) 80%, transparent);
+  --pg-tab-on: var(--bg-raised);
+  --pg-tab-on-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --pg-seg: color-mix(in srgb, var(--ink) 6%, transparent);
+  --pg-seg-on: var(--bg-raised);
+  --pg-seg-on-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --lg-rim-hi: rgba(255, 255, 255, 0.3);
+    --lg-rim-lo: rgba(255, 255, 255, 0.04);
+    --lg-inner: inset 0 1px 0.5px rgba(255, 255, 255, 0.14);
+    --lg-drop: 0 10px 28px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.28);
+    --pg-nav: color-mix(in srgb, var(--bg) 84%, transparent);
+    --pg-tab-on: color-mix(in srgb, #fff 10%, transparent);
+    --pg-tab-on-shadow: none;
+    --pg-seg: color-mix(in srgb, var(--ink) 8%, transparent);
+    --pg-seg-on: color-mix(in srgb, #fff 14%, transparent);
+    --pg-seg-on-shadow: none;
+  }
+}
+:root[data-theme='dark'] {
+  --lg-rim-hi: rgba(255, 255, 255, 0.3);
+  --lg-rim-lo: rgba(255, 255, 255, 0.04);
+  --lg-inner: inset 0 1px 0.5px rgba(255, 255, 255, 0.14);
+  --lg-drop: 0 10px 28px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.28);
+  --pg-nav: color-mix(in srgb, var(--bg) 84%, transparent);
+  --pg-tab-on: color-mix(in srgb, #fff 10%, transparent);
+  --pg-tab-on-shadow: none;
+  --pg-seg: color-mix(in srgb, var(--ink) 8%, transparent);
+  --pg-seg-on: color-mix(in srgb, #fff 14%, transparent);
+  --pg-seg-on-shadow: none;
+}
+
+/* ── Shared material: frost, a faint inner highlight, a soft contact shadow ── */
+.nav,
+.reel-bottom,
+.atlas-card,
+.instrument,
+.sheet,
+.seg,
+.inst-tabs,
+.atlas-toggle,
+.toast,
+.btn-ghost,
+.chip,
+.reel-top .icon-btn,
+.page-head .icon-btn,
+.atlas-caption {
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(140%);
+  backdrop-filter: blur(var(--lg-blur)) saturate(140%);
+  box-shadow: var(--lg-inner), var(--lg-drop);
+  isolation: isolate;
+}
+/* In-flow elements need a positioning context for the rim (fixed/absolute ones already have one). */
+.reel-bottom,
+.instrument,
+.seg,
+.inst-tabs,
+.btn,
+.chip,
+.reel-top .icon-btn,
+.page-head .icon-btn {
+  position: relative;
+}
+/* Rim: a 1px gradient border, brightest top-left, like light catching a curved edge. */
+.nav::after,
+.reel-bottom::after,
+.atlas-card::after,
+.instrument::after,
+.sheet::after,
+.seg::after,
+.inst-tabs::after,
+.atlas-toggle::after,
+.toast::after,
+.btn::after,
+.chip::after,
+.reel-top .icon-btn::after,
+.page-head .icon-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg, var(--lg-rim-hi), var(--lg-rim-lo) 34%, transparent 55%, var(--lg-rim-lo) 78%, var(--lg-rim-hi));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Tab bar: a floating capsule, detached from the edges ── */
+.nav {
+  left: 12px;
+  right: 12px;
+  bottom: calc(10px + var(--safe-b));
+  border-radius: 32px;
+  border: 0;
+  background: var(--pg-nav);
+  padding: 4px;
+}
+.main {
+  padding-bottom: calc(var(--nav-h) + var(--safe-b) + 22px);
+}
+.nav-item {
+  height: 56px;
+  border-radius: 26px;
+}
+.nav-item[aria-current='page'] {
+  color: var(--accent);
+  background: var(--pg-tab-on);
+  box-shadow: var(--pg-tab-on-shadow);
+}
+.nav-item[aria-current='page']::before {
+  display: none;
+}
+.player {
+  height: calc(100dvh - var(--safe-b));
+}
+.feed {
+  padding-bottom: 0;
+}
+.reel {
+  padding-bottom: calc(var(--nav-h) + 14px);
+}
+
+/* ── Lesson controls: a capsule tinted by the subject ── */
+.reel-bottom {
+  margin: 0 12px 10px;
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--s-bg) 70%, color-mix(in srgb, var(--s-ink) 10%, transparent));
+}
+.reel-top .icon-btn {
+  width: 40px;
+  height: 40px;
+  margin: 2px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--s-ink) 10%, transparent);
+}
+
+/* ── Cards over maps, and the instrument panel ── */
+.atlas-card {
+  border-radius: 22px;
+  background: rgba(18, 20, 24, 0.6);
+}
+.atlas-card.glass--paper {
+  background: rgba(250, 243, 226, 0.82);
+}
+.instrument.glass {
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--s-deep) 92%, transparent);
+}
+.inst-tabs {
+  background: rgba(255, 255, 255, 0.08);
+}
+.inst-tabs button[aria-selected='true'] {
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: none;
+}
+.atlas-toggle {
+  background: rgba(18, 20, 24, 0.55);
+}
+.atlas-caption {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.15));
+}
+
+/* ── Sheets: a floating pane, inset from the edges, with solid paper answer tiles ── */
+.sheet {
+  margin: 0 8px calc(8px + var(--safe-b));
+  width: calc(100% - 16px);
+  border-radius: 34px;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+}
+.sheet-head {
+  border-bottom-color: transparent;
+}
+.sheet-foot {
+  border-top-color: transparent;
+}
+.q-opt {
+  border-radius: 18px;
+}
+.feedback {
+  border-radius: 22px;
+}
+
+/* ── Controls: matte capsules that keep their colours ── */
+.btn {
+  border: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.btn-ghost {
+  background: color-mix(in srgb, var(--bg-raised) 72%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 16%, transparent), 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+.surface .btn-ghost {
+  background: color-mix(in srgb, var(--s-ink) 8%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--s-ink) 24%, transparent), 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+.btn-quiet {
+  box-shadow: none;
+}
+.btn-quiet::after {
+  display: none;
+}
+.seg {
+  border: 0;
+  background: var(--pg-seg);
+}
+.seg button[aria-pressed='true'],
+.seg button[aria-selected='true'] {
+  background: var(--pg-seg-on);
+  box-shadow: var(--pg-seg-on-shadow);
+}
+.chip {
+  border: 0;
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+.page-head .icon-btn {
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+/* The toast stays the inverse of the page, as before, so its text keeps its contrast in both themes. */
+.toast {
+  background: color-mix(in srgb, var(--ink) 86%, transparent);
+  border-radius: 24px;
+  width: max-content;
+}
+/* In a lesson the toast rises above the floating lesson bar instead of covering its controls. */
+body:has(.player) .toast {
+  bottom: calc(var(--nav-h) + var(--safe-b) + 90px);
+}
+
+/* ── Desktop: the rail becomes a floating column ── */
+@media (min-width: 960px) {
+  body:has(.player) .toast {
+    bottom: 96px;
+  }
+  .nav {
+    position: sticky;
+    top: 12px;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    margin: 12px;
+    height: calc(100dvh - 24px);
+    border-radius: 30px;
+    padding: 24px 12px 16px;
+  }
+  .nav-item {
+    height: 44px;
+    border-radius: 14px;
+  }
+  .main {
+    padding-bottom: 0;
+  }
+  .reel {
+    padding-bottom: 0;
+  }
+  .player {
+    height: 100dvh;
+  }
+}
+
+/* ── Reduce Transparency: the same shapes in solid fills, no blur ── */
+@media (prefers-reduced-transparency: reduce) {
+  .nav,
+  .reel-bottom,
+  .atlas-card,
+  .instrument,
+  .sheet,
+  .seg,
+  .inst-tabs,
+  .atlas-toggle,
+  .toast,
+  .btn-ghost,
+  .chip,
+  .reel-top .icon-btn,
+  .page-head .icon-btn,
+  .atlas-caption {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .nav,
+  .sheet {
+    background: var(--bg);
+  }
+  .reel-bottom,
+  .reel-top .icon-btn,
+  .surface .btn-ghost {
+    background: color-mix(in srgb, var(--s-ink) 9%, var(--s-bg));
+  }
+  .atlas-card,
+  .atlas-toggle {
+    background: #1c1e22;
+  }
+  .atlas-card.glass--paper,
+  .atlas-caption {
+    background: #f6eedc;
+  }
+  .instrument.glass {
+    background: var(--s-deep);
+  }
+  .btn-ghost {
+    background: var(--bg-raised);
+  }
+  .seg,
+  .chip,
+  .page-head .icon-btn {
+    background: color-mix(in srgb, var(--ink) 6%, var(--bg));
+  }
+  .toast {
+    background: var(--ink);
+  }
+}
+
+/* ── Increase Contrast: solid fills, no blur, a defined edge instead of the lit rim ── */
+@media (prefers-contrast: more) {
+  .nav,
+  .reel-bottom,
+  .atlas-card,
+  .instrument,
+  .sheet,
+  .seg,
+  .inst-tabs,
+  .atlas-toggle,
+  .toast,
+  .btn-ghost,
+  .chip,
+  .reel-top .icon-btn,
+  .page-head .icon-btn,
+  .atlas-caption {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .nav::after,
+  .reel-bottom::after,
+  .atlas-card::after,
+  .instrument::after,
+  .sheet::after,
+  .seg::after,
+  .inst-tabs::after,
+  .atlas-toggle::after,
+  .toast::after,
+  .btn::after,
+  .chip::after,
+  .reel-top .icon-btn::after,
+  .page-head .icon-btn::after {
+    display: none;
+  }
+  .nav,
+  .sheet {
+    background: var(--bg);
+    box-shadow: inset 0 0 0 1.5px var(--ink-2), var(--lg-drop);
+  }
+  .seg,
+  .chip,
+  .page-head .icon-btn,
+  .btn-ghost {
+    background: var(--bg-raised);
+    box-shadow: inset 0 0 0 1.5px var(--ink-2);
+  }
+  .reel-bottom,
+  .reel-top .icon-btn,
+  .surface .btn-ghost {
+    background: var(--s-bg);
+    box-shadow: inset 0 0 0 1.5px var(--s-ink);
+  }
+  .atlas-card,
+  .atlas-toggle {
+    background: #111214;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.55);
+  }
+  .atlas-card.glass--paper,
+  .atlas-caption {
+    background: #fbf6ea;
+    box-shadow: inset 0 0 0 1.5px #5b4a32;
+  }
+  .instrument.glass {
+    background: var(--s-deep);
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.55);
+  }
+  .toast {
+    background: var(--ink);
+  }
+}

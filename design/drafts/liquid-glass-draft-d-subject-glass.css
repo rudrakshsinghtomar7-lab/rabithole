@@ -1,0 +1,62 @@
+/* Draft D · Subject Glass — layered on Draft A. The glass takes on the colour of what you're
+   studying: in a lesson, the tab bar and sheets tint with the subject; primary buttons become
+   vermilion glass. Outside lessons, bars tint with the accent. */
+
+.shell {
+  --nav-tint: var(--accent);
+}
+.shell:has(.player .surface[data-subject='philosophy']) { --nav-tint: var(--phil-bg); }
+.shell:has(.player .surface[data-subject='history']) { --nav-tint: var(--hist-art); }
+.shell:has(.player .surface[data-subject='marketing']) { --nav-tint: var(--mkt-art-2); }
+.shell:has(.player .surface[data-subject='politics']) { --nav-tint: var(--pol-bg); }
+.shell:has(.player .surface[data-subject='economics']) { --nav-tint: var(--eco-art-2); }
+.shell:has(.player .surface[data-subject='geography']) { --nav-tint: var(--geo-bg); }
+.shell:has(.player .surface[data-subject='finance']) { --nav-tint: var(--fin-art-2); }
+.shell:has(.player .surface[data-subject='science']) { --nav-tint: var(--sci-bg); }
+.shell:has(.player .surface[data-subject='course']) { --nav-tint: var(--course-bg); }
+
+.nav {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.04)), color-mix(in srgb, var(--nav-tint) 22%, color-mix(in srgb, var(--bg) 70%, transparent));
+}
+.nav-item[aria-current='page'],
+:root .nav-item[aria-current='page'] {
+  color: #fff !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05)), color-mix(in srgb, var(--nav-tint) 88%, transparent) !important;
+  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.7), 0 4px 12px color-mix(in srgb, var(--nav-tint) 40%, transparent) !important;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .nav {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.01)), color-mix(in srgb, var(--nav-tint) 20%, color-mix(in srgb, var(--bg) 78%, transparent));
+  }
+}
+
+/* Sheets tint with the lesson's subject */
+body:has(.player .surface[data-subject='philosophy']) .sheet { --sheet-tint: var(--phil-bg); }
+body:has(.player .surface[data-subject='history']) .sheet { --sheet-tint: var(--hist-art); }
+body:has(.player .surface[data-subject='finance']) .sheet { --sheet-tint: var(--fin-art-2); }
+body:has(.player .surface[data-subject='science']) .sheet { --sheet-tint: var(--sci-bg); }
+.sheet {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1)), color-mix(in srgb, var(--sheet-tint, var(--accent)) 10%, color-mix(in srgb, var(--bg) 74%, transparent));
+}
+.sheet .q-step i.now {
+  background: var(--sheet-tint, var(--accent));
+}
+
+/* Primary actions become vermilion glass */
+.btn:not(.btn-ghost):not(.btn-quiet) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0) 60%), var(--accent);
+  border-color: transparent;
+  color: var(--accent-ink);
+}
+.surface .btn:not(.btn-ghost):not(.btn-quiet) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 60%), color-mix(in srgb, var(--s-ink) 92%, transparent);
+  color: var(--s-bg);
+}
+.reel-bottom {
+  background: linear-gradient(180deg, color-mix(in srgb, #fff 30%, transparent), color-mix(in srgb, #fff 4%, transparent)),
+    color-mix(in srgb, var(--s-art-2) 45%, color-mix(in srgb, var(--s-bg) 50%, transparent));
+}
+.seg button[aria-pressed='true'],
+.seg button[aria-selected='true'] {
+  color: var(--accent);
+}

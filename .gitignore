@@ -25,3 +25,7 @@ dist-ssr
 
 # Local secrets
 .env
+
+# Design preview screenshots stay local (large)
+design/drafts/options-previews/
+design/drafts/draft-a-previews/
