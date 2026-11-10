@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { useLocation, useParams } from 'wouter'
 import { ArrowLeft, ArrowRight, ExternalLink, Flag, Lock } from 'lucide-react'
 import { getSubject, themeForPath } from '../content'
@@ -9,6 +9,10 @@ import { Art, subjectMotif } from '../ui/Art'
 import { StatusDot, Ticks, statusText } from '../ui/common'
 import { challengeUrl, getPath, learnUrl } from '../ui/paths'
 import { FamiliaritySheet } from './InterestsHome'
+import { pathAtlas } from '../content/contexts'
+
+const Atlas = lazy(() => import('../ui/atlas/Atlas'))
+const atlasTitle = { ideas: 'Where these ideas came from', historical: 'Where it happened', terrain: 'Places in this path' } as const
 
 export function PathOverview() {
   const { pathId } = useParams<{ pathId: string }>()
@@ -39,6 +43,8 @@ export function PathOutline({ path, compactHeader }: { path: Path; compactHeader
   const { state, update } = useStore()
   const [, navigate] = useLocation()
   const [picker, setPicker] = useState(false)
+  const atlas = useMemo(() => pathAtlas(path.modules.flatMap((m) => m.topics.map((t) => t.id))), [path])
+  const [atlasPlace, setAtlasPlace] = useState<string | undefined>(undefined)
   const prog = pathProgress(state, path)
   const theme = themeForPath(path)
   const sub = getSubject(path.subjectId)
@@ -93,6 +99,41 @@ export function PathOutline({ path, compactHeader }: { path: Path; compactHeader
             ))}
           </div>
         </div>
+      )}
+
+      {atlas && (
+        <section className="section" aria-labelledby="atlas-h">
+          <div className="section-head">
+            <h2 id="atlas-h" className="eyebrow">
+              {atlasTitle[atlas.style]}
+            </h2>
+            <span className="small muted">{atlas.places.length} places</span>
+          </div>
+          <div className="path-atlas">
+            <Suspense fallback={<div className="atlas atlas--loading" aria-hidden="true" />}>
+              <Atlas ctx={atlas} placeId={atlasPlace} card={false} />
+            </Suspense>
+          </div>
+          <ol className="rows lineage" aria-label="Timeline">
+            {(atlas.route ?? []).map((id) => {
+              const pl = atlas.places.find((p) => p.id === id)!
+              return (
+                <li key={id}>
+                  <button type="button" className="row" aria-pressed={atlasPlace === id} onClick={() => setAtlasPlace(id)}>
+                    <span className="row-num">{pl.year ?? '—'}</span>
+                    <span>
+                      <span className="row-title">{pl.who ? `${pl.who} · ${pl.name}` : pl.name}</span>
+                      <span className="row-sub" style={{ display: 'block' }}>
+                        {pl.note}
+                      </span>
+                    </span>
+                    <span className="tag">Show</span>
+                  </button>
+                </li>
+              )
+            })}
+          </ol>
+        </section>
       )}
 
       {path.modules.map((m, mi) => {

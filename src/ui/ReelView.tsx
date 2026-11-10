@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import type { Reel, ReelInteraction } from '../content/types'
 import { Art } from './Art'
 
@@ -11,10 +11,11 @@ const kindLabel: Record<Reel['kind'], string> = {
   reflect: 'Reflection',
 }
 
-export function ReelContent({ reel, actionLabel, compact }: { reel: Reel; actionLabel: string; compact?: boolean }) {
+export function ReelContent({ reel, actionLabel, compact, stage }: { reel: Reel; actionLabel: string; compact?: boolean; stage?: ReactNode }) {
   return (
     <>
-      {!compact && (
+      {!compact && stage}
+      {!compact && !stage && (
         <figure className="reel-art" style={{ margin: '0 -22px' }}>
           <Art motif={reel.visual.motif} />
           {reel.visual.caption && <figcaption>{reel.visual.caption}</figcaption>}

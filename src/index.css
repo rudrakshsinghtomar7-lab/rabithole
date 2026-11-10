@@ -1946,3 +1946,710 @@ button.row:active,
   --s-art: var(--sci-art);
   --s-art-2: var(--sci-art-2);
 }
+
+/* ───────── Materials ───────── */
+.glass {
+  background: rgba(20, 22, 26, 0.54);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 10px 30px rgba(0, 0, 0, 0.28);
+  color: #f3f1ec;
+  border-radius: 18px;
+}
+.glass--paper {
+  background: rgba(250, 243, 226, 0.74);
+  color: #2f2617;
+  border-color: rgba(90, 70, 40, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 8px 24px rgba(60, 40, 10, 0.18);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .glass--paper {
+    background: rgba(32, 27, 18, 0.7);
+    color: #ecdcb9;
+    border-color: rgba(230, 210, 170, 0.18);
+  }
+}
+:root[data-theme='dark'] .glass--paper {
+  background: rgba(32, 27, 18, 0.7);
+  color: #ecdcb9;
+  border-color: rgba(230, 210, 170, 0.18);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: #1c1e22;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .glass--paper {
+    background: #f6eedc;
+  }
+}
+
+/* ───────── Context stage (above reel text) ───────── */
+.ctx-stage {
+  flex: none;
+  position: relative;
+}
+.ctx-stage--map {
+  margin: 0 -22px;
+  height: clamp(210px, 36vh, 330px);
+  overflow: hidden;
+}
+.ctx-stage--instrument {
+  margin: 2px 0 0;
+}
+
+/* ───────── Atlas ───────── */
+.atlas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  --sea: #0c0e13;
+  --land: #1b1f27;
+  --land-stroke: #333945;
+  --grat: rgba(255, 255, 255, 0.05);
+  --route: #f4f1ea;
+  --dot: #c9c4b8;
+  --label: #ece8df;
+  --ring: #ffffff;
+  --focus-fill: rgba(255, 255, 255, 0.18);
+  --glow: #ffffff;
+  --hatch: transparent;
+  background: var(--sea);
+}
+.atlas svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.atlas--loading {
+  background: color-mix(in srgb, var(--s-ink) 10%, transparent);
+}
+.atlas--historical {
+  --sea: #d8c79f;
+  --land: #efe3c3;
+  --land-stroke: #6b5636;
+  --grat: rgba(70, 50, 20, 0.16);
+  --route: #8a2f1d;
+  --dot: #5b4a32;
+  --label: #3b2e1c;
+  --ring: #8a2f1d;
+  --focus-fill: rgba(138, 47, 29, 0.14);
+  --glow: #8a2f1d;
+  --hatch: rgba(90, 70, 40, 0.18);
+}
+.atlas--terrain {
+  --sea: #082427;
+  --land: #164641;
+  --land-stroke: #3f8f84;
+  --grat: rgba(180, 240, 230, 0.08);
+  --route: #e6f6f0;
+  --dot: #bfe8de;
+  --label: #e6f6f0;
+  --ring: #ffffff;
+  --focus-fill: rgba(255, 255, 255, 0.2);
+  --glow: #7fe0cf;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .atlas--historical {
+    --sea: #1d1810;
+    --land: #2c2518;
+    --land-stroke: #b59c6d;
+    --grat: rgba(230, 210, 170, 0.1);
+    --route: #e07a52;
+    --dot: #c9b083;
+    --label: #ead9b5;
+    --ring: #e07a52;
+    --focus-fill: rgba(224, 122, 82, 0.16);
+    --glow: #e07a52;
+    --hatch: rgba(230, 210, 170, 0.07);
+  }
+}
+:root[data-theme='dark'] .atlas--historical {
+  --sea: #1d1810;
+  --land: #2c2518;
+  --land-stroke: #b59c6d;
+  --grat: rgba(230, 210, 170, 0.1);
+  --route: #e07a52;
+  --dot: #c9b083;
+  --label: #ead9b5;
+  --ring: #e07a52;
+  --focus-fill: rgba(224, 122, 82, 0.16);
+  --glow: #e07a52;
+  --hatch: rgba(230, 210, 170, 0.07);
+}
+.atlas-sea {
+  fill: var(--sea);
+}
+.atlas-hatch {
+  stroke: var(--hatch);
+  stroke-width: 0.5;
+}
+.atlas-land {
+  fill: var(--land);
+  stroke: var(--land-stroke);
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+}
+.atlas-graticule {
+  fill: none;
+  stroke: var(--grat);
+  stroke-width: 0.5;
+}
+.atlas-route {
+  fill: none;
+  stroke: var(--route);
+  stroke-width: 1.3;
+  stroke-dasharray: 3 4;
+  stroke-linecap: round;
+  opacity: 0.6;
+  transition: opacity 0.4s var(--ease);
+}
+.atlas-route--done {
+  stroke-dasharray: none;
+  stroke-width: 1.8;
+  opacity: 0.95;
+}
+.atlas-place {
+  cursor: pointer;
+  outline: none;
+}
+.atlas-hit {
+  fill: transparent;
+}
+.atlas-place:focus-visible .atlas-hit {
+  stroke: var(--focus);
+  stroke-width: 2;
+}
+.atlas-dot {
+  fill: var(--dot);
+}
+.atlas-ring {
+  fill: none;
+  stroke: var(--ring);
+  stroke-width: 1.1;
+  stroke-dasharray: 3 4;
+}
+.atlas-dot-focus {
+  fill: var(--focus-fill);
+  stroke: var(--ring);
+  stroke-width: 1.2;
+}
+.atlas-dot-core {
+  fill: var(--ring);
+}
+.atlas-glow-a {
+  stop-color: var(--glow);
+  stop-opacity: 0.4;
+}
+.atlas-glow-b {
+  stop-color: var(--glow);
+  stop-opacity: 0;
+}
+.atlas-label {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 9px;
+  letter-spacing: 0.02em;
+  fill: var(--label);
+  paint-order: stroke;
+  stroke: var(--sea);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.atlas-label--focus {
+  font-size: 11px;
+}
+.atlas--historical .atlas-label {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+.atlas--historical .atlas-label--focus {
+  font-size: 14px;
+}
+.atlas-compass circle {
+  fill: none;
+  stroke: var(--land-stroke);
+  stroke-width: 0.7;
+}
+.atlas-compass path {
+  fill: var(--route);
+}
+.atlas-compass text {
+  font: italic 8px var(--serif);
+  fill: var(--label);
+}
+.atlas-highlight {
+  stroke: rgba(0, 0, 0, 0.35);
+  stroke-width: 0.6;
+}
+.atlas-highlight--0 {
+  fill: #f2c462;
+}
+.atlas-highlight--1 {
+  fill: #ff8f6b;
+}
+.atlas-hl-label {
+  font: 700 10px var(--sans);
+  fill: #fff;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.55);
+  stroke-width: 3px;
+}
+.atlas-hl-sub {
+  font: 600 8.5px var(--sans);
+  fill: #fff;
+  opacity: 0.85;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.55);
+  stroke-width: 3px;
+}
+.atlas-card {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  max-width: min(80%, 320px);
+  padding: 10px 13px 11px;
+  display: grid;
+  gap: 2px;
+  border-radius: 16px;
+}
+.atlas-card-kind {
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  opacity: 0.72;
+}
+.atlas-card-title {
+  font-family: var(--serif);
+  font-size: 20px;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+.atlas-card-year {
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0;
+  opacity: 0.75;
+}
+.atlas-card-who {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.atlas-card-note {
+  font-size: 12px;
+  line-height: 1.35;
+  opacity: 0.86;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.atlas-caption {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--label);
+  background: color-mix(in srgb, var(--sea) 82%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+.atlas-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px;
+  border-radius: 999px;
+}
+.atlas-toggle button {
+  color: rgba(255, 255, 255, 0.72);
+  min-height: 34px;
+}
+.atlas-toggle button[aria-pressed='true'] {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  box-shadow: none;
+}
+
+/* Path overview atlas */
+.path-atlas {
+  aspect-ratio: 400 / 260; /* the map's own proportions: nothing is cropped */
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-top: 16px;
+}
+.lineage .row-num {
+  font-size: 15px;
+  width: auto;
+  min-width: 64px;
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ───────── Instrument panel ───────── */
+.instrument {
+  padding: 14px 14px 12px;
+  display: grid;
+  gap: 10px;
+  border-radius: 22px;
+  min-width: 0;
+}
+.inst-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.inst-title {
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+}
+.inst-tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  opacity: 0.85;
+}
+.inst-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.inst-tabs::-webkit-scrollbar {
+  display: none;
+}
+.inst-tabs button {
+  flex: none;
+  min-height: 34px;
+  padding: 0 13px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.68);
+  font-weight: 600;
+  font-size: 12.5px;
+  white-space: nowrap;
+  transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 120ms var(--ease);
+}
+.inst-tabs button[aria-selected='true'] {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+.inst-tabs button:active {
+  transform: scale(0.96);
+}
+.inst-value {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.inst-num {
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: clamp(36px, 10.5vw, 52px);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.inst-dim {
+  opacity: 0.42;
+}
+.inst-unit {
+  font-size: 13px;
+  opacity: 0.7;
+}
+.inst-line {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.inst-guide {
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-dasharray: 2 5;
+}
+.inst-series {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+.inst-area {
+  fill: rgba(255, 255, 255, 0.06);
+}
+.inst-compare {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.38);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 3;
+}
+.inst-highlight {
+  fill: none;
+  stroke: #f5a25d;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+.inst-hl-dot {
+  fill: #f5a25d;
+}
+.inst-axis {
+  font: 9px var(--sans);
+  fill: rgba(255, 255, 255, 0.55);
+}
+.inst-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 9px;
+}
+.inst-bars li {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr) auto;
+  gap: 10px;
+  align-items: center;
+  font-size: 12.5px;
+}
+.inst-bar-label {
+  opacity: 0.85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.inst-bar-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.inst-bar-fill {
+  display: block;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.88);
+  transform-origin: left center;
+  border-radius: 3px;
+}
+.inst-bars .is-accent .inst-bar-fill {
+  background: #f5a25d;
+}
+.inst-bars .is-muted .inst-bar-fill {
+  background: rgba(255, 255, 255, 0.38);
+}
+.inst-bar-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.inst-groups {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.inst-groups li {
+  display: grid;
+  grid-template-columns: 10px minmax(0, auto) minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+  font-size: 12.5px;
+  padding: 7px 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  animation: inst-in 0.32s var(--ease) both;
+}
+.inst-group-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  align-self: center;
+}
+.inst-groups .is-accent .inst-group-dot {
+  background: #f5a25d;
+}
+.inst-groups .is-muted {
+  opacity: 0.7;
+}
+.inst-group-label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.inst-group-note {
+  opacity: 0.82;
+}
+@keyframes inst-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+.inst-caption {
+  font-size: 12.5px;
+  line-height: 1.4;
+  opacity: 0.82;
+  margin: 0;
+}
+.inst-origin {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  opacity: 0.58;
+}
+
+/* Reel controls as a floating material, like the rest of the chrome */
+.reel-bottom {
+  margin: 0 10px 10px;
+  padding: 4px 6px 4px 14px;
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--s-ink) 9%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  min-height: 56px;
+}
+@media (prefers-reduced-transparency: reduce) {
+  .reel-bottom {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Instrument panels: a deep, saturated version of each subject's colour (like a control room),
+   so glass never turns muddy over a pale surface. */
+.surface {
+  --s-deep: #15171b;
+}
+.surface[data-subject='economics'] {
+  --s-deep: #2a1c05;
+}
+.surface[data-subject='finance'] {
+  --s-deep: #10301d;
+}
+.surface[data-subject='science'] {
+  --s-deep: #0f1f63;
+}
+.surface[data-subject='marketing'] {
+  --s-deep: #1a1f0e;
+}
+.surface[data-subject='course'] {
+  --s-deep: #0f1729;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .surface[data-subject='economics'] { --s-deep: #171003; }
+  :root:not([data-theme='light']) .surface[data-subject='finance'] { --s-deep: #07170d; }
+  :root:not([data-theme='light']) .surface[data-subject='science'] { --s-deep: #0a1546; }
+  :root:not([data-theme='light']) .surface[data-subject='marketing'] { --s-deep: #0d1106; }
+}
+:root[data-theme='dark'] .surface[data-subject='economics'] { --s-deep: #171003; }
+:root[data-theme='dark'] .surface[data-subject='finance'] { --s-deep: #07170d; }
+:root[data-theme='dark'] .surface[data-subject='science'] { --s-deep: #0a1546; }
+:root[data-theme='dark'] .surface[data-subject='marketing'] { --s-deep: #0d1106; }
+.instrument.glass {
+  background: color-mix(in srgb, var(--s-deep) 90%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 14px 34px color-mix(in srgb, var(--s-deep) 35%, transparent);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .instrument.glass {
+    background: var(--s-deep);
+  }
+}
+.lineage button.row[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+/* ───────── Apple-design audit fixes ───────── */
+/* The map moves as one composited layer (transform only); content beyond the viewBox stays painted. */
+.atlas svg:not(.atlas-compass) {
+  overflow: visible;
+  will-change: transform;
+}
+/* Sideways drags pan the map; vertical swipes stay with the reel feed. */
+.atlas--pannable {
+  touch-action: pan-y;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.atlas--pannable:active {
+  cursor: grabbing;
+}
+.atlas-compass {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 40px;
+  pointer-events: none;
+}
+/* Press feedback on a place, the instant it's touched. */
+.atlas-place .atlas-dot,
+.atlas-place .atlas-dot-focus {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 120ms var(--ease);
+}
+.atlas-place:active .atlas-dot,
+.atlas-place:active .atlas-dot-focus {
+  transform: scale(1.4);
+}
+/* The card materialises (blur + scale + opacity together) rather than just swapping text. */
+.atlas-card {
+  animation: materialise 0.34s var(--ease) both;
+}
+@keyframes materialise {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+    filter: blur(4px);
+  }
+}
+@media (prefers-contrast: more) {
+  .glass {
+    background: #111214;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: rgba(255, 255, 255, 0.55);
+  }
+  .glass--paper {
+    background: #fbf6ea;
+    color: #1f170b;
+    border-color: #5b4a32;
+  }
+  .atlas-card-note,
+  .atlas-card-kind,
+  .inst-caption,
+  .inst-origin {
+    opacity: 1;
+  }
+}
+/* The compass is a separate small SVG; out-rank the full-bleed `.atlas svg` sizing. */
+.atlas svg.atlas-compass {
+  width: 30px;
+  height: 40px;
+  overflow: visible;
+  will-change: auto;
+}

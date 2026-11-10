@@ -11,6 +11,8 @@ import { ReelContent } from '../ui/ReelView'
 import { SourceList } from '../ui/Sources'
 import { StatusDot, Ticks, statusText, toast } from '../ui/common'
 import { challengeUrl, getPath, learnUrl, overviewUrl } from '../ui/paths'
+import { ContextStage } from '../ui/ContextStage'
+import { contextFor, focusFor, isMapContext } from '../content/contexts'
 import { setThemeOverride } from '../ui/themeColor'
 
 // One learning session spans topics until the learner finishes it.
@@ -45,7 +47,9 @@ function TopicPlayer({ path, loc }: { path: Path; loc: TopicLocation }) {
   const reels = useMemo(() => visibleReels(topic, fam), [topic, fam])
   const key = topicKey(path.id, topic.id)
   const [initialIdx] = useState(() => Math.min(state.feed[key]?.reelIndex ?? 0, reels.length))
-  const [idx, setIdx] = useState(initialIdx)
+  const [view, setView] = useState({ idx: initialIdx, prev: initialIdx })
+  const idx = view.idx
+  const setIdx = useCallback((n: number) => setView((v) => (v.idx === n ? v : { idx: n, prev: v.idx })), [])
   const [sheet, setSheet] = useState<SheetKind>(null)
   const [noteReel, setNoteReel] = useState<Reel | null>(null)
   const [quiz, setQuiz] = useState<QuizProgress>(newProgress)
@@ -63,6 +67,8 @@ function TopicPlayer({ path, loc }: { path: Path; loc: TopicLocation }) {
   const isLastInModule = loc.topicIndex === module.topics.length - 1
   const current: Reel | undefined = reels[Math.min(idx, reels.length - 1)]
   const onCheckpoint = idx >= reels.length
+  const topicCtx = contextFor(topic.id)
+  const prevPlaceId = isMapContext(topicCtx) ? focusFor(topicCtx, reels[Math.min(view.prev, reels.length - 1)]?.id).id : undefined
 
   useEffect(() => {
     update((s) => openTopic(s, path.id, topic.id))
@@ -244,7 +250,7 @@ function TopicPlayer({ path, loc }: { path: Path; loc: TopicLocation }) {
                     )}
                   </div>
                 )}
-                <ReelContent reel={reel} actionLabel={actionLabel} />
+                <ReelContent reel={reel} actionLabel={actionLabel} stage={<ContextStage topicId={topic.id} reel={reel} active={i === idx} fromPlaceId={i === idx ? prevPlaceId : undefined} />} />
               </div>
               <div className="reel-bottom">
                 <div className="reel-progress">
